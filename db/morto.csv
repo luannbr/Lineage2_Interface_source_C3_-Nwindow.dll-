@@ -1,0 +1,11 @@
+# Stock functions no path of the game reaches in hook mode: every caller is ours (or an EH
+# funclet of ours) and the vtables that list them are the original's, which no object uses any
+# more. tools/build_db.py gives them status morto with this reason, and warns (keeping them
+# todo) when a caller in the original shows up. See docs/notas/Restante.md. (C3 addresses; the
+# C2 list is db/c2/morto.csv.)
+va,reason
+10119b20,"NStrihash (UE2 appStrihash; regcheck refuses a hook: partial cx): its nine callers are hooked (NMsnHeaderMap::Rehash/Lookup, NMsnStrStrMap::Add/Set, TMapFStringWnd::Rehash, NMsnWndStrMapOps::MultiFind/AddWnd, NMsnWndStrMap::FindWnd/SetWnd) and call NChatTypes.cpp's NStrihash; no vtable or pointer refers to it"
+10126680,"Md5::CopyWords (eax/ecx/edx arguments; regcheck refuses a hook): its two callers are the two Md5::Final call sites; Final 10127080 is hooked (NMd5Final copies with memcpy)"
+101266c0,"Md5::DecodeWords (eax/ecx/edx arguments; regcheck refuses a hook): its only caller is Md5::Transform, itself dead; NMd5Transform reads the block's words in C++"
+10126700,"Md5::Transform (eax/stack arguments; regcheck refuses a hook): its two callers are the two block calls of Md5::Update 10126FC0, which is hooked (NMd5Update runs the C++ NMd5Transform, native-tested against RFC 1321)"
+1005a470,"HasNoFinalConsonant (character in AX; regcheck refuses a hook): its three callers (NConsoleWnd::FormatSystemMessage, EndSystemMessageParam, MakeSystemMessage) are hooked and carry the logic inline (NConsoleWnd.h)"
